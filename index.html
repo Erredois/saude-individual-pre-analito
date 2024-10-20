@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Fase Pré-Analítica</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .quiz-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 5px 0;
+      padding: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+    .options button:hover {
+      background-color: #e0e0e0;
+    }
+    .feedback {
+      font-size: 1em;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .feedback.correct {
+      color: green;
+    }
+    .feedback.incorrect {
+      color: red;
+    }
+    .nav-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div id="question-container"></div>
+    <div class="nav-buttons">
+      <button id="prev-btn" onclick="prevQuestion()">Anterior</button>
+      <button id="next-btn" onclick="nextQuestion()" class="hidden">Próxima</button>
+    </div>
+    <div id="score-container" class="hidden"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Qual o percentual das decisões médicas que se baseiam em exames complementares?",
+        options: ["50%", "70%", "30%", "90%"],
+        correctAnswer: 1
+      },
+      {
+        question: "Qual é a importância do ciclo 'brain-to-brain loop' na fase pré-analítica?",
+        options: ["Reduzir o tempo dos exames", "Assegurar uma comunicação eficaz entre paciente, médico e laboratório", "Eliminar a necessidade de exames complementares", "Aumentar a precisão dos resultados com menos informações"],
+        correctAnswer: 1
+      },
+      {
+        question: "O que é a fase 'Ordering' no ciclo brain-to-brain?",
+        options: ["Coleta de amostras", "Solicitação de exame pelo médico", "Preparação das amostras", "Interpretação dos resultados"],
+        correctAnswer: 1
+      },
+      {
+        question: "Qual fase do ciclo brain-to-brain envolve a coleta de amostras?",
+        options: ["Ordering", "Collection", "Reporting", "Identification"],
+        correctAnswer: 1
+      },
+      {
+        question: "Em qual fase o médico interpreta os resultados e os relaciona aos dados clínicos do paciente?",
+        options: ["Analysis", "Interpretation", "Collection", "Reporting"],
+        correctAnswer: 1
+      },
+      {
+        question: "Quantos por cento dos erros laboratoriais ocorrem na fase pré-analítica?",
+        options: ["30%", "40%", "70%", "50%"],
+        correctAnswer: 2
+      },
+      {
+        question: "Qual é uma das formas recomendadas para reduzir a quantidade de erros na fase pré-analítica?",
+        options: ["Substituir o uso de automação", "Aumentar a quantidade de etapas no processo", "Automatizar processos", "Reduzir o número de testes"],
+        correctAnswer: 2
+      },
+      {
+        question: "Quais são as principais variáveis que podem afetar os resultados de exames laboratoriais?",
+        options: ["Variáveis fisiológicas, de interferência e de coleta", "Somente variáveis cronobiológicas", "Variáveis de interferência e dietéticas", "Variáveis de transporte e análise"],
+        correctAnswer: 0
+      },
+      {
+        question: "Qual o melhor momento do dia para coletar amostras de ferro e cortisol?",
+        options: ["No início da tarde", "Pela manhã", "Durante a noite", "No final da tarde"],
+        correctAnswer: 1
+      },
+      {
+        question: "Como o ciclo menstrual afeta os exames laboratoriais?",
+        options: ["Afeta apenas os níveis de TSH", "Influencia apenas os níveis de glicose", "Pode alterar os níveis de hormônios sexuais e aldosterona", "Não tem impacto em exames laboratoriais"],
+        correctAnswer: 2
+      },
+      {
+        question: "Quais variáveis relacionadas à idade podem influenciar os resultados laboratoriais?",
+        options: ["Glicemia e TSH", "Bilirrubina e imunoglobulinas", "Hemoglobina e ureia", "Bilirrubina e cortisol"],
+        correctAnswer: 1
+      },
+      {
+        question: "Por que o jejum é obrigatório para exames de glicemia?",
+        options: ["Para evitar hipoglicemia", "Para evitar a interferência da gliconeogênese após 8 horas", "Para aumentar a produção de cortisol", "Para garantir a produção de insulina"],
+        correctAnswer: 1
+      },
+      {
+        question: "Quais substâncias no sangue podem ser influenciadas pelo gênero do paciente?",
+        options: ["Bilirrubina e ureia", "Hormônios sexuais e enzimas hepáticas", "Creatinina e cortisol", "Aldosterona e hormônios tiroidianos"],
+        correctAnswer: 1
+      },
+      {
+        question: "Como a hemólise pode comprometer os resultados laboratoriais?",
+        options: ["Aumentando a concentração de glicose no sangue", "Alterando os níveis de hemoglobina e corrompendo os resultados", "Aumentando o número de leucócitos", "Alterando apenas os níveis de potássio"],
+        correctAnswer: 1
+      },
+      {
+        question: "Por que é importante homogeneizar corretamente os tubos com anticoagulantes?",
+        options: ["Para evitar a formação de coágulos ou interferências nos resultados", "Para aumentar o volume da amostra", "Para melhorar a qualidade do plasma coletado", "Para eliminar as células sanguíneas"],
+        correctAnswer: 0
+      },
+      {
+        question: "Quais fatores podem influenciar a estabilidade das amostras?",
+        options: ["Temperatura, tempo e manipulação", "Dieta e jejum", "Gênero e idade", "Temperatura e pressão arterial"],
+        correctAnswer: 0
+      },
+      {
+        question: "Por que o uso de conservantes é importante na coleta de amostras?",
+        options: ["Para evitar a coagulação do sangue", "Para garantir a estabilidade dos analitos durante o transporte", "Para aumentar a quantidade de sangue coletado", "Para garantir a presença de anticoagulantes"],
+        correctAnswer: 1
+      },
+      {
+        question: "Quais os principais componentes do tubo de coleta a vácuo?",
+        options: ["Volume de aditivo e material reciclável", "Vácuo calibrado e volume de aditivo proporcional", "Aditivo anticoagulante e células sanguíneas", "Gel separador e anticoagulante"],
+        correctAnswer: 1
+      },
+      {
+        question: "Por que a coleta a vácuo é considerada mais segura do que o uso de seringa e agulha?",
+        options: ["Porque evita o contato com o paciente", "Porque é um sistema fechado que evita a manipulação das amostras", "Porque coleta menos sangue", "Porque reduz o tempo de coleta"],
+        correctAnswer: 1
+      },
+      {
+        question: "O que pode ser feito para evitar a hemólise antes da coleta?",
+        options: ["Deixar o álcool secar antes da punção", "Aumentar o tempo de torniquete no braço", "Usar uma agulha de calibre menor", "Coletar o sangue mais rapidamente"],
+        correctAnswer: 0
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let correctAnswersFirstTry = 0;
+    let hasAnsweredCorrectly = false;
+
+    function showQuestion() {
+      const questionContainer = document.getElementById('question-container');
+      const currentQuestion = questions[currentQuestionIndex];
+      hasAnsweredCorrectly = false;
+      questionContainer.innerHTML = `
+        <div class="question">${currentQuestion.question}</div>
+        <div class="options">
+          ${currentQuestion.options.map((option, index) => `
+            <button onclick="checkAnswer(${index})">${option}</button>
+          `).join('')}
+        </div>
+        <div id="feedback" class="feedback"></div>
+      `;
+    }
+
+    function checkAnswer(selectedOption) {
+      const feedbackElement = document.getElementById('feedback');
+      const optionButtons = document.querySelectorAll('.options button');
+
+      if (!hasAnsweredCorrectly) {
+        if (selectedOption === questions[currentQuestionIndex].correctAnswer) {
+          feedbackElement.textContent = 'Correto!';
+          feedbackElement.classList.add('correct');
+          hasAnsweredCorrectly = true;
+          correctAnswersFirstTry++;
+          optionButtons.forEach(button => {
+            button.disabled = true;
+          });
+          setTimeout(nextQuestion, 2000);
+        } else {
+          feedbackElement.textContent = 'Incorreto! Tente novamente.';
+          feedbackElement.classList.add('incorrect');
+        }
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+        document.getElementById('prev-btn').classList.remove('hidden');
+      } else {
+        showScore();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion();
+      }
+      if (currentQuestionIndex === 0) {
+        document.getElementById('prev-btn').classList.add('hidden');
+      }
+    }
+
+    function showScore() {
+      const scoreContainer = document.getElementById('score-container');
+      const questionContainer = document.getElementById('question-container');
+      questionContainer.innerHTML = ''; 
+      scoreContainer.innerHTML = `<div class="score">Você acertou ${correctAnswersFirstTry} de ${questions.length} questões de primeira!</div>`;
+      scoreContainer.classList.remove('hidden');
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
